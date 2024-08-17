@@ -34,9 +34,9 @@ jobs:
         with:
           path: out/resume.pdf
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            out/resume.pdf
+#      - name: Release
+#        uses: softprops/action-gh-release@v2
+#        if: startsWith(github.ref, 'refs/tags/')
+#        with:
+#          files: |
+#            out/resume.pdf

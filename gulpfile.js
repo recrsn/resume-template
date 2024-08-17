@@ -153,8 +153,6 @@ const build = gulp.series(clean, gulp.parallel(styles, templates, svg), pdf);
  * You can use CommonJS `exports` module notation to declare tasks
  */
 exports.clean = clean;
-exports.styles = styles;
-exports.templates = templates;
 exports.watch = watch;
 exports.build = build;
 
