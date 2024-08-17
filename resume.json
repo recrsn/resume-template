@@ -1,0 +1,143 @@
+{
+  "info": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "title": "Software Engineer",
+    "email": "john.doe@example.com",
+    "phone": "+1 555-555-5555",
+    "location": {
+      "city": "San Francisco",
+      "countryCode": "US"
+    },
+    "linkedIn": {
+      "username": "johndoe",
+      "url": "https://www.linkedin.com/in/johndoe/"
+    },
+    "github": {
+      "username": "johndoe",
+      "url": "https://github.com/johndoe"
+    },
+    "skills": [
+      {
+        "category": "Languages",
+        "values": [
+          "Java",
+          "Python",
+          "JavaScript",
+          "SQL"
+        ]
+      },
+      {
+        "category": "Frameworks & Tools",
+        "values": [
+          "Spring Boot",
+          "Kubernetes",
+          "SQL Server",
+          "PostgreSQL",
+          "Prometheus",
+          "Grafana",
+          "Kafka"
+        ]
+      }
+    ]
+  },
+  "education": [
+    {
+      "institution": "Example University",
+      "area": "B.Tech in Computer Science and Technology",
+      "location": "Example City, Example State",
+      "startDate": "2018-06-01",
+      "endDate": "2021-05-31"
+    }
+  ],
+  "experience": [
+    {
+      "company": "Tech Solutions",
+      "position": "Software Engineer",
+      "location": "Remote / New York, USA",
+      "startDate": "2022-07-01",
+      "highlights": [
+        "Developed a microservice architecture for a high-traffic e-commerce platform.",
+        "Implemented a real-time notification system using WebSockets.",
+        "Optimized database queries to improve application performance.",
+        "Led a team of developers to refactor legacy codebase.",
+        "Designed and implemented RESTful APIs for mobile applications.",
+        "Integrated third-party payment gateways for seamless transactions.",
+        "Developed a custom logging framework for better error tracking.",
+        "Implemented a caching mechanism to reduce server load.",
+        "Automated deployment processes using CI/CD pipelines.",
+        "Conducted code reviews and provided mentorship to junior developers."
+      ]
+    },
+    {
+      "company": "Global Tech",
+      "position": "Software Engineer",
+      "location": "San Francisco, USA",
+      "startDate": "2021-09-01",
+      "endDate": "2022-06-30",
+      "highlights": [
+        "Developed a machine learning model for predictive analytics.",
+        "Implemented data visualization dashboards using D3.js.",
+        "Optimized ETL processes for faster data ingestion.",
+        "Collaborated with data scientists to deploy machine learning models.",
+        "Developed a chatbot using natural language processing techniques.",
+        "Implemented a recommendation engine for personalized user experiences."
+      ]
+    },
+    {
+      "company": "Innovative Solutions",
+      "position": "Software Engineer (Intern)",
+      "location": "Los Angeles, USA",
+      "startDate": "2020-11-01",
+      "endDate": "2021-04-30",
+      "highlights": [
+        "Developed a mobile application for real-time location tracking.",
+        "Implemented push notifications for user engagement.",
+        "Created a RESTful API for backend services.",
+        "Developed a user authentication system using OAuth.",
+        "Implemented a feature for offline data synchronization."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Project Alpha",
+      "highlights": [
+        "A platform for real-time data analytics and visualization.",
+        "Designed to handle large-scale data processing.",
+        "Provides interactive dashboards for data exploration.",
+        "Supports integration with various data sources."
+      ],
+      "github": {
+        "repository": "project-alpha",
+        "url": "https://github.com/johndoe/project-alpha"
+      }
+    },
+    {
+      "name": "Project Beta",
+      "highlights": [
+        "Developed a command-line tool for automating repetitive tasks.",
+        "Supports integration with various APIs.",
+        "Provides a user-friendly interface for configuration.",
+        "Includes features for error handling and logging."
+      ],
+      "github": {
+        "repository": "project-beta",
+        "url": "https://github.com/johndoe/project-beta"
+      }
+    },
+    {
+      "name": "Project Gamma",
+      "highlights": [
+        "An internal tool for managing project documentation.",
+        "Implements a version control system for documents.",
+        "Supports collaborative editing and commenting.",
+        "Provides a search functionality for easy document retrieval."
+      ],
+      "github": {
+        "repository": "project-gamma",
+        "url": "https://github.com/johndoe/project-gamma"
+      }
+    }
+  ]
+}
