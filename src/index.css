@@ -17,11 +17,6 @@
     }
 }
 
-
-body {
-    font-family: "Computer Modern Sans", sans-serif;
-}
-
 h1 {
     @apply text-5xl font-bold;
 }

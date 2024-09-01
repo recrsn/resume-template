@@ -2,6 +2,8 @@ import colors from "tailwindcss/colors.js";
 
 export default {
   source: "./resume.json",
+  font: "Roboto",
+  fallbackFont: "sans-serif",
   colors: {
     accent: colors.blue,
     neutral: colors.neutral,

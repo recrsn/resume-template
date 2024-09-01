@@ -1,11 +1,11 @@
 import * as gulp from "gulp";
 import postcss from "gulp-postcss";
-import { rm, mkdir, readFile } from "node:fs/promises";
+import { rm, mkdir, readFile, writeFile } from "node:fs/promises";
 import { Transform } from "node:stream";
 import handlebars from "handlebars";
 import { optimize } from "svgo";
 import { launch } from "puppeteer";
-import { resolve, dirname } from "path";
+import { resolve, dirname, join } from "path";
 import config from "./resume.config.js";
 import livereload from "./server/livereload.js";
 import tailwindcss from "tailwindcss";
@@ -27,7 +27,11 @@ const paths = {
     dest: buildDir,
   },
   svg: {
-    src: "src/**/*.svg",
+    src: "./src/**/*.svg",
+    dest: buildDir,
+  },
+  fonts: {
+    src: "./src/fonts",
     dest: buildDir,
   },
   pdf: {
@@ -75,7 +79,7 @@ function styles() {
   return gulp
     .src(paths.styles.src)
     .pipe(postcss(postCssPlugins))
-    .pipe(_dest(paths.styles.dest));
+    .pipe(gulp.dest(paths.styles.dest));
 }
 
 function render(context) {
@@ -111,11 +115,16 @@ function svgo() {
 }
 
 async function templates() {
-  const context = await JSON.parse(await readFile(paths.data.src));
+  const context = JSON.parse(await readFile(paths.data.src));
 
   return gulp
     .src(paths.templates.src)
-    .pipe(render(context))
+    .pipe(
+      render({
+        config,
+        ...context,
+      }),
+    )
     .pipe(gulp.dest(paths.templates.dest));
 }
 
@@ -123,14 +132,49 @@ function svg() {
   return gulp.src(paths.svg.src).pipe(svgo()).pipe(gulp.dest(paths.svg.dest));
 }
 
+async function fonts() {
+  const manifest = JSON.parse(
+    await readFile(join(paths.fonts.src, "manifest.json")),
+  );
+  const content = (
+    await Promise.all(
+      manifest.map(async (font) => {
+        const base64 = await readFile(
+          join(paths.fonts.src, font.src),
+          "base64",
+        );
+
+        const properties = [
+          `font-family: "${font.family}"`,
+          `src: url("data:font/${font.type};base64,${base64}") format("${font.format}")`,
+          "font-display: swap",
+        ];
+
+        if (font.weight) {
+          properties.push(`font-weight: ${font.weight}`);
+        }
+
+        if (font.style) {
+          properties.push(`font-style: "${font.style}"`);
+        }
+
+        return `@font-face {${properties.join(";")}}`;
+      }),
+    )
+  ).join("\n");
+
+  return await writeFile(join(paths.fonts.dest, "fonts.css"), content);
+}
+
 export function watch() {
-  gulp.parallel(styles, templates, svg);
+  gulp.parallel(styles, templates, svg, fonts)();
 
   gulp.watch(paths.data.src, templates);
   gulp.watch(paths.templates.src, templates);
   gulp.watch(paths.templates.src, styles);
   gulp.watch(paths.styles.src, styles);
   gulp.watch(paths.svg.src, svg);
+  gulp.watch(paths.fonts.src + "/*", fonts);
 
   const server = livereload(buildDir);
   server.start();
@@ -156,7 +200,7 @@ export async function pdf() {
  */
 export const build = gulp.series(
   clean,
-  gulp.parallel(styles, templates, svg),
+  gulp.parallel(styles, templates, svg, fonts),
   pdf,
 );
 

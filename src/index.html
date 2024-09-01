@@ -6,6 +6,11 @@
         <title>Resume | {{ info.firstName }} {{ info.lastName }}</title>
         <link rel="stylesheet" href="fonts.css" />
         <link rel="stylesheet" href="index.css" />
+        <style>
+            body {
+                font-family: "{{ config.font }}", {{ config.fallbackFont }};
+            }
+        </style>
     </head>
     <body>
         <div class="paper a4 mx-auto flex flex-col">
