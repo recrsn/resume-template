@@ -1,116 +1,172 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume | {{ info.firstName }} {{ info.lastName }}</title>
-    <link rel="stylesheet" href="fonts.css" />
-    <link rel="stylesheet" href="index.css"/>
-</head>
-<body>
-<div class="paper a4 mx-auto flex flex-col">
-    <header class="flex flex-col items-center pb-4 border-b border-neutral-600">
-        <h1 class="text-accent-600">{{ info.firstName }} {{ info.lastName }}</h1>
-        <div class="text-lg smallcaps">{{ info.title }}</div>
-        <ul class="text-neutral-600 text-sm">
-            <li class="inline mx-1">
-                <img class="w-4 h-4 inline" src="images/location-outline.svg" alt="Location"/>
-                <span>{{ info.location.city }}, {{info.location.countryCode}}</span>
-            </li>
-            <li class="inline mx-1">
-                <img class="w-4 h-4 inline" src="images/call-outline.svg" alt="Phone"/>
-                <span>{{ info.phone }}</span>
-            </li>
-            <li class="inline mx-1">
-                <img class="w-4 h-4 inline" src="images/mail-outline.svg" alt="Email"/>
-                <span>{{ info.email }}</span>
-            </li>
-            <li class="inline mx-1">
-                <a href="{{ info.linkedIn.url }}">
-                    <img class="w-4 h-4 inline" src="images/logo-linkedin.svg" alt="LinkedIn"/>
-                    <span>{{info.linkedIn.username}}</span>
-                </a>
-            </li>
-            <li class="inline mx-1">
-                <a href="{{ info.github.url }}">
-                    <img class="w-4 h-4 inline" src="images/logo-github.svg" alt="GitHub"/>
-                    <span>{{info.github.username}}</span>
-                </a>
-            </li>
-        </ul>
-    </header>
-    <main>
-        <section class="my-4 break-inside-avoid">
-            <h2 class="text-accent-600">Skills</h2>
-            <table class="my-2 border-separate border-spacing-0.5">
-                {{#each info.skills}}
-                <tr>
-                    <td class="font-bold text-end">{{ this.category }}:</td>
-                    <td>{{join this.values ", " }}</td>
-                </tr>
-                {{/each}}
-            </table>
-        </section>
-        <section class="my-4 break-inside-avoid">
-            <h2 class="text-accent-600">Experience</h2>
-            <ul>
-                {{#each experience}}
-                <li class="my-2">
-                    <div class="flex flex-row justify-between">
-                        <h3>{{ this.company }}</h3>
-                        <span class="text-sm text-neutral-600">{{this.location}}</span>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <span class="smallcaps font-bold text-neutral-600">{{ this.position }}</span>
-                        <span class="text-sm text-neutral-600">{{dateformat this.startDate }} - {{#if this.endDate}}{{dateformat this.endDate }}{{else}}present{{/if}}</span>
-                    </div>
-                    <ul class="list-disc ml-6">
-                        {{#each this.highlights}}
-                        <li>{{ this }}</li>
-                        {{/each}}
-                    </ul>
-                </li>
-                {{/each}}
-            </ul>
-        </section>
-        <section class="my-4 break-inside-avoid">
-            <h2 class="text-accent-600">Education</h2>
-            <ul>
-                {{#each education}}
-                <li class="my-2">
-                    <div class="flex flex-row justify-between">
-                        <h3>{{ this.institution }}</h3>
-                        <span class="text-sm text-neutral-600">{{this.location}}</span>
-                    </div>
-                    <div class="flex flex-row justify-between">
-                        <span class="smallcaps font-bold text-neutral-600">{{ this.area }}</span>
-                        <span class="text-sm text-neutral-600">{{dateformat this.startDate }} - {{#if this.endDate}}{{dateformat this.endDate }}{{else}}present{{/if}}</span>
-                    </div>
-                </li>
-                {{/each}}
-            </ul>
-        </section>
-        <section class="my-4 break-inside-avoid">
-            <h2 class="text-accent-600">Projects</h2>
-            <ul>
-                {{#each projects}}
-                <li class="my-2">
-                    <div class="flex flex-row justify-between">
-                        <h3>{{ this.name }}</h3>
-                        <a class="text-neutral-600 text-sm" href="{{this.github.url}}">
-                            <img class="w-4 h-4 inline" src="images/logo-github.svg" alt="GitHub"/>
-                            <span>{{this.github.repository}}</span>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Resume | {{ info.firstName }} {{ info.lastName }}</title>
+        <link rel="stylesheet" href="fonts.css" />
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <body>
+        <div class="paper a4 mx-auto flex flex-col">
+            <header
+                class="flex flex-col items-center pb-4 border-b border-neutral-600"
+            >
+                <h1 class="text-accent-600">
+                    {{ info.firstName }} {{ info.lastName }}
+                </h1>
+                <div class="text-lg smallcaps">{{ info.title }}</div>
+                <ul class="text-neutral-600 text-sm">
+                    <li class="inline mx-1">
+                        <img
+                            class="w-4 h-4 inline"
+                            src="images/location-outline.svg"
+                            alt="Location"
+                        />
+                        <span
+                            >{{ info.location.city }},
+                            {{info.location.countryCode}}</span
+                        >
+                    </li>
+                    <li class="inline mx-1">
+                        <img
+                            class="w-4 h-4 inline"
+                            src="images/call-outline.svg"
+                            alt="Phone"
+                        />
+                        <span>{{ info.phone }}</span>
+                    </li>
+                    <li class="inline mx-1">
+                        <img
+                            class="w-4 h-4 inline"
+                            src="images/mail-outline.svg"
+                            alt="Email"
+                        />
+                        <span>{{ info.email }}</span>
+                    </li>
+                    <li class="inline mx-1">
+                        <a href="{{ info.linkedIn.url }}">
+                            <img
+                                class="w-4 h-4 inline"
+                                src="images/logo-linkedin.svg"
+                                alt="LinkedIn"
+                            />
+                            <span>{{info.linkedIn.username}}</span>
                         </a>
-                    </div>
-                    <ul class="list-disc ml-6">
-                        {{#each this.highlights}}
-                        <li>{{ this }}</li>
+                    </li>
+                    <li class="inline mx-1">
+                        <a href="{{ info.github.url }}">
+                            <img
+                                class="w-4 h-4 inline"
+                                src="images/logo-github.svg"
+                                alt="GitHub"
+                            />
+                            <span>{{info.github.username}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </header>
+            <main>
+                <section class="my-4 break-inside-avoid">
+                    <h2 class="text-accent-600">Skills</h2>
+                    <table class="my-2 border-separate border-spacing-0.5">
+                        {{#each info.skills}}
+                        <tr>
+                            <td class="font-bold text-end">
+                                {{ this.category }}:
+                            </td>
+                            <td>{{join this.values ", " }}</td>
+                        </tr>
+                        {{/each}}
+                    </table>
+                </section>
+                <section class="my-4 break-inside-avoid">
+                    <h2 class="text-accent-600">Experience</h2>
+                    <ul>
+                        {{#each experience}}
+                        <li class="my-2">
+                            <div class="flex flex-row justify-between">
+                                <h3>{{ this.company }}</h3>
+                                <span class="text-sm text-neutral-600"
+                                    >{{this.location}}</span
+                                >
+                            </div>
+                            <div class="flex flex-row justify-between">
+                                <span
+                                    class="smallcaps font-bold text-neutral-600"
+                                    >{{ this.position }}</span
+                                >
+                                <span class="text-sm text-neutral-600"
+                                    >{{dateformat this.startDate }} - {{#if
+                                    this.endDate}}{{dateformat this.endDate
+                                    }}{{else}}present{{/if}}</span
+                                >
+                            </div>
+                            <ul class="list-disc ml-6">
+                                {{#each this.highlights}}
+                                <li>{{ this }}</li>
+                                {{/each}}
+                            </ul>
+                        </li>
                         {{/each}}
                     </ul>
-                </li>
-                {{/each}}
-            </ul>
-        </section>
-    </main>
-</div>
-</body>
+                </section>
+                <section class="my-4 break-inside-avoid">
+                    <h2 class="text-accent-600">Education</h2>
+                    <ul>
+                        {{#each education}}
+                        <li class="my-2">
+                            <div class="flex flex-row justify-between">
+                                <h3>{{ this.institution }}</h3>
+                                <span class="text-sm text-neutral-600"
+                                    >{{this.location}}</span
+                                >
+                            </div>
+                            <div class="flex flex-row justify-between">
+                                <span
+                                    class="smallcaps font-bold text-neutral-600"
+                                    >{{ this.area }}</span
+                                >
+                                <span class="text-sm text-neutral-600"
+                                    >{{dateformat this.startDate }} - {{#if
+                                    this.endDate}}{{dateformat this.endDate
+                                    }}{{else}}present{{/if}}</span
+                                >
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </section>
+                <section class="my-4 break-inside-avoid">
+                    <h2 class="text-accent-600">Projects</h2>
+                    <ul>
+                        {{#each projects}}
+                        <li class="my-2">
+                            <div class="flex flex-row justify-between">
+                                <h3>{{ this.name }}</h3>
+                                <a
+                                    class="text-neutral-600 text-sm"
+                                    href="{{this.github.url}}"
+                                >
+                                    <img
+                                        class="w-4 h-4 inline"
+                                        src="images/logo-github.svg"
+                                        alt="GitHub"
+                                    />
+                                    <span>{{this.github.repository}}</span>
+                                </a>
+                            </div>
+                            <ul class="list-disc ml-6">
+                                {{#each this.highlights}}
+                                <li>{{ this }}</li>
+                                {{/each}}
+                            </ul>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </section>
+            </main>
+        </div>
+        <script src="/livereload.js"></script>
+    </body>
+</html>

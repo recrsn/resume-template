@@ -1,159 +1,163 @@
-const gulp = require('gulp');
-const postcss = require('gulp-postcss');
-const fs = require('node:fs/promises')
-const {Transform} = require('node:stream');
-const Handlebars = require('handlebars');
-const {optimize} = require('svgo');
-const puppeteer = require('puppeteer');
-const path = require('path');
-const config = require('./resume.config')
+import * as gulp from "gulp";
+import postcss from "gulp-postcss";
+import { rm, mkdir, readFile } from "node:fs/promises";
+import { Transform } from "node:stream";
+import handlebars from "handlebars";
+import { optimize } from "svgo";
+import { launch } from "puppeteer";
+import { resolve, dirname } from "path";
+import config from "./resume.config.js";
+import livereload from "./server/livereload.js";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
+import cssnano from "cssnano";
 
-
-const buildDir = path.resolve(__dirname, 'build');
+const buildDir = resolve("./build");
 
 const paths = {
-    data: {
-        src: config.source
-    },
-    styles: {
-        src: './src/**/*.css',
-        dest: buildDir
-    },
-    templates: {
-        src: './src/**/*.html',
-        dest: buildDir
-    },
-    svg: {
-        src: 'src/**/*.svg',
-        dest: buildDir
-    },
-    pdf: {
-        dest: config.pdf.dest
-    }
+  data: {
+    src: config.source,
+  },
+  styles: {
+    src: "./src/**/*.css",
+    dest: buildDir,
+  },
+  templates: {
+    src: "./src/**/*.html",
+    dest: buildDir,
+  },
+  svg: {
+    src: "src/**/*.svg",
+    dest: buildDir,
+  },
+  pdf: {
+    dest: config.pdf.dest,
+  },
 };
 
 const tailwindConfig = {
-    content: [
-        paths.templates.src,
-    ],
-    theme: {
-        colors: {
-            accent: config.colors.accent,
-            neutral: config.colors.neutral,
-        }
+  content: [paths.templates.src],
+  theme: {
+    colors: {
+      accent: config.colors.accent,
+      neutral: config.colors.neutral,
     },
-    plugins: [],
+  },
+  plugins: [],
 };
 
-const postCssPlugins = [
-    require('tailwindcss')(tailwindConfig),
-    require('autoprefixer'),
-    require('cssnano')
-];
+const postCssPlugins = [tailwindcss(tailwindConfig), autoprefixer, cssnano];
 
-Handlebars.registerHelper('join', function (items, separator) {
-    return items.join(separator);
+handlebars.registerHelper("join", function (items, separator) {
+  return items.join(separator);
 });
 
-Handlebars.registerHelper('dateformat', function (date) {
-    return new Date(date).toLocaleDateString([], {
-        year: '2-digit',
-        month: 'long',
-    });
-})
+handlebars.registerHelper("dateformat", function (date) {
+  return new Date(date).toLocaleDateString([], {
+    year: "2-digit",
+    month: "long",
+  });
+});
 
-async function clean() {
-    await Promise.all([
-        fs.rm(buildDir, {recursive: true, force: true}),
-        fs.rm(config.pdf.dest, {force: true})
-    ])
+export async function clean() {
+  await Promise.all([
+    rm(buildDir, { recursive: true, force: true }),
+    rm(config.pdf.dest, { force: true }),
+  ]);
 
-    return Promise.all([
-        fs.mkdir(buildDir, {recursive: true}),
-        fs.mkdir(path.dirname(config.pdf.dest), {recursive: true})
-    ]);
+  return Promise.all([
+    mkdir(buildDir, { recursive: true }),
+    mkdir(dirname(config.pdf.dest), { recursive: true }),
+  ]);
 }
 
 function styles() {
-    return gulp.src(paths.styles.src)
-        .pipe(postcss(postCssPlugins))
-        .pipe(gulp.dest(paths.styles.dest));
+  return gulp
+    .src(paths.styles.src)
+    .pipe(postcss(postCssPlugins))
+    .pipe(_dest(paths.styles.dest));
 }
 
 function render(context) {
-    return new Transform({
-        objectMode: true,
-        write(chunk, _, callback) {
-            if (chunk.isBuffer()) {
-                chunk.contents = Buffer.from(Handlebars.compile(chunk.contents.toString())(context));
-            }
+  return new Transform({
+    objectMode: true,
+    write(chunk, _, callback) {
+      if (chunk.isBuffer()) {
+        chunk.contents = Buffer.from(
+          handlebars.compile(chunk.contents.toString())(context),
+        );
+      }
 
-            this.push(chunk);
-            callback(null, chunk);
-        }
-    });
+      this.push(chunk);
+      callback(null, chunk);
+    },
+  });
 }
 
 function svgo() {
-    return new Transform({
-        objectMode: true,
-        write(chunk, encoding, callback) {
-            if (chunk.isBuffer()) {
-                const result = optimize(chunk.contents.toString('utf8'), {path: chunk.path})
-                chunk.contents = Buffer.from(result.data);
-            }
-            this.push(chunk);
-            callback(null, chunk);
-        }
-    });
+  return new Transform({
+    objectMode: true,
+    write(chunk, encoding, callback) {
+      if (chunk.isBuffer()) {
+        const result = optimize(chunk.contents.toString("utf8"), {
+          path: chunk.path,
+        });
+        chunk.contents = Buffer.from(result.data);
+      }
+      this.push(chunk);
+      callback(null, chunk);
+    },
+  });
 }
 
-function templates() {
-    const context = require(paths.data.src);
+async function templates() {
+  const context = await JSON.parse(await readFile(paths.data.src));
 
-    return gulp.src(paths.templates.src)
-        .pipe(render(context))
-        .pipe(gulp.dest(paths.templates.dest));
+  return gulp
+    .src(paths.templates.src)
+    .pipe(render(context))
+    .pipe(gulp.dest(paths.templates.dest));
 }
 
 function svg() {
-    return gulp.src(paths.svg.src)
-        .pipe(svgo())
-        .pipe(gulp.dest(paths.svg.dest));
+  return gulp.src(paths.svg.src).pipe(svgo()).pipe(gulp.dest(paths.svg.dest));
 }
 
+export function watch() {
+  gulp.parallel(styles, templates, svg);
 
-function watch() {
-    gulp.watch(paths.data.src, templates);
-    gulp.watch(paths.templates.src, templates);
-    gulp.watch(paths.templates.src, styles);
-    gulp.watch(paths.styles.src, styles);
-    gulp.watch(paths.svg.src, svg);
+  gulp.watch(paths.data.src, templates);
+  gulp.watch(paths.templates.src, templates);
+  gulp.watch(paths.templates.src, styles);
+  gulp.watch(paths.styles.src, styles);
+  gulp.watch(paths.svg.src, svg);
+
+  const server = livereload(buildDir);
+  server.start();
+
+  gulp.watch(buildDir + "/**/*").on("change", server.reload);
 }
 
-async function pdf() {
-    const browser = await puppeteer.launch({headless: true});
-    const page = await browser.newPage();
-    await page.goto(`file://${path.resolve(buildDir, 'index.html')}`, {
-        waitUntil: 'networkidle0',
-    });
-    await page.pdf({
-        path: config.pdf.dest,
-        ...config.pdf.options
-    });
-    await browser.close();
+export async function pdf() {
+  const browser = await launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto(`file://${resolve(buildDir, "index.html")}`, {
+    waitUntil: "networkidle0",
+  });
+  await page.pdf({
+    path: config.pdf.dest,
+    ...config.pdf.options,
+  });
+  await browser.close();
 }
 
 /*
  * Specify if tasks run in series or parallel using `gulp.series` and `gulp.parallel`
  */
-const build = gulp.series(clean, gulp.parallel(styles, templates, svg), pdf);
+export const build = gulp.series(
+  clean,
+  gulp.parallel(styles, templates, svg),
+  pdf,
+);
 
-/*
- * You can use CommonJS `exports` module notation to declare tasks
- */
-exports.clean = clean;
-exports.watch = watch;
-exports.build = build;
-
-exports.default = build;
+export default build;

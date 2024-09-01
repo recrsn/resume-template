@@ -2,7 +2,7 @@
   "info": {
     "firstName": "John",
     "lastName": "Doe",
-    "title": "Software Engineer",
+    "title": "Software Developer",
     "email": "john.doe@example.com",
     "phone": "+1 555-555-5555",
     "location": {
@@ -20,12 +20,7 @@
     "skills": [
       {
         "category": "Languages",
-        "values": [
-          "Java",
-          "Python",
-          "JavaScript",
-          "SQL"
-        ]
+        "values": ["Java", "Python", "JavaScript", "SQL"]
       },
       {
         "category": "Frameworks & Tools",
